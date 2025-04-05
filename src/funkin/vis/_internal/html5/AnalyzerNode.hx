@@ -36,12 +36,7 @@ class AnalyzerNode
         ctx = howl._sounds[0]._node.context;
 
         analyzer = new AnalyseWebAudio(ctx);
-        reconnectAnalyzer(audioClip);
-
-        howl.on("play", (e) ->
-        {
-            reconnectAnalyzer(audioClip);
-        });
+        howl.on("play", onHowlPlay);
 
         // trace(node.bufferSource);
         // untyped console.log(node);
@@ -58,6 +53,13 @@ class AnalyzerNode
         #end
     }
 
+    public function cleanup():Void
+    {
+        #if lime_howlerjs
+        howl.off("play", onHowlPlay);
+        #end
+    }
+
     public function getFloatFrequencyData():Array<Float>
     {
         #if lime_howlerjs
@@ -71,6 +73,7 @@ class AnalyzerNode
         return [];
     }
 
+    #if lime_howlerjs
     function reconnectAnalyzer(audioClip:AudioClip):Void
     {
         var gainNode = howl._sounds[0]._node;
@@ -106,4 +109,10 @@ class AnalyzerNode
         // Connect the gain node back to the destination
         gainNode.connect(ctx.destination);
     }
+
+    function onHowlPlay():Void
+    {
+        reconnectAnalyzer(audioClip);
+    }
+    #end
 }

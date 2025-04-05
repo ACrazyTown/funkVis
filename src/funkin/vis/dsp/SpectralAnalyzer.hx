@@ -159,6 +159,13 @@ class SpectralAnalyzer
         resizeBlackmanWindow(fftN);
 	}
 
+    public function cleanup():Void
+    {
+        #if web
+        htmlAnalyzer.cleanup();
+        #end
+    }
+
 	public function getLevels(?levels:Array<Bar>):Array<Bar>
 	{
         if(levels == null) levels = new Array<Bar>();
