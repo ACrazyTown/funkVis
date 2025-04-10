@@ -30,12 +30,13 @@ class LimeAudioClip implements funkin.vis.AudioClip
 
 		#if web
 		streamed = false;
+
 		var sampleRate:Float = limeBuffer.src._sounds[0]._node.context.sampleRate;
 		var length:Int = audioSource.length;
 		var bitsPerSample:Int = 32;
 		var channels:Int = 2;
 		#else
-		var sampleRate:Float = 0.0;
+		var sampleRate:Float = 0;
 		var length:Int = 0;
 		var bitsPerSample:Int = 0;
 		var channels:Int = 0;
@@ -45,7 +46,6 @@ class LimeAudioClip implements funkin.vis.AudioClip
 		@:privateAccess
 		if (limeBuffer.__srcVorbisFile != null)
 		{
-			trace("got vorbisfile");
 			streamed = true;
 
 			var vorbisFile = limeBuffer.__srcVorbisFile;

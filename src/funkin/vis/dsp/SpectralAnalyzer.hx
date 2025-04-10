@@ -211,30 +211,17 @@ class SpectralAnalyzer
         #if lime_vorbis
         if (audioClip.streamed)
         {
-            var length = endFrame - startFrame;
-            // trace(length);
-            // var buffer:Bytes = Bytes.alloc();
-            
-            // if (_vorbisBuffer == null || (_vorbisBuffer.length != length))
-            // {
-            //     _vorbisBuffer = null;
-            //     _vorbisBuffer = new UInt8Array(length);
-            // }
-
             @:privateAccess
             var vorbisFile = audioSource.buffer.__srcVorbisFile;
 
             // reading from VorbisFile will automatically move the position
             // which causes issues with playback, so we keep old time to go back to it
             var prevPos = vorbisFile.pcmTell();
- 
-            vorbisFile.pcmSeek(startFrame);
+
+            vorbisFile.pcmSeek(Std.int(startFrame / (numOctets + audioClip.audioBuffer.channels)));
 
             @:privateAccess
-            // _vorbisBuffer = audioSource.__backend.readVorbisFileBuffer(vorbisFile, length);
-            _vorbisBuffer = readVorbisBuffer(vorbisFile, 0, wantedLength);
-
-            // trace('$startFrame - $endFrame');
+            _vorbisBuffer = readVorbisBuffer(vorbisFile, wantedLength);
 
             vorbisFile.pcmSeek(prevPos);
 
@@ -243,8 +230,6 @@ class SpectralAnalyzer
         else
         #end
         {
-            
-
             var segment:UInt8Array = audioSource.buffer.data.subarray(startFrame, endFrame);
             signal = getSignal(segment, audioClip.audioBuffer.bitsPerSample);
         }
@@ -333,7 +318,9 @@ class SpectralAnalyzer
     }
 
     #if lime_vorbis
-    function readVorbisBuffer(vorbisFile:VorbisFile, position:Int, length:Int):UInt8Array
+    // Pretty much copied from
+    // https://github.com/openfl/lime/blob/develop/src/lime/_internal/backend/native/NativeAudioSource.hx#L212
+    function readVorbisBuffer(vorbisFile:VorbisFile, length:Int):UInt8Array
     {
         var buffer:UInt8Array = new UInt8Array(length);
 
