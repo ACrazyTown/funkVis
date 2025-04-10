@@ -41,6 +41,7 @@ class LimeAudioClip implements funkin.vis.AudioClip
 		var bitsPerSample:Int = 0;
 		var channels:Int = 0;
 
+		#if lime_vorbis
 		// If we have a ref to a VorbisFile it should be safe to assume
 		// this is a streamed sound!
 		@:privateAccess
@@ -57,6 +58,7 @@ class LimeAudioClip implements funkin.vis.AudioClip
 			channels = vorbisInfo.channels;
 		}
 		else
+		#end
 		{
 			streamed = false;
 

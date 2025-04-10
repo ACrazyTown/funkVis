@@ -5,7 +5,6 @@ import lime.utils.UInt16Array;
 class AudioBuffer
 {
     public var data(default, null):UInt16Array;
-
     public var sampleRate(default, null):Float;
     public var length(default, null):Int;
     public var bitsPerSample(default, null):Int;

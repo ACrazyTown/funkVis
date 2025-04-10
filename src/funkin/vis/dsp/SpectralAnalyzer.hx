@@ -1,6 +1,5 @@
 package funkin.vis.dsp;
 
-import lime.media.vorbis.VorbisFile;
 import haxe.io.Bytes;
 import lime.utils.UInt8Array;
 import flixel.FlxG;
@@ -10,6 +9,10 @@ import funkin.vis.audioclip.frontends.LimeAudioClip;
 import grig.audio.FFT;
 import grig.audio.FFTVisualization;
 import lime.media.AudioSource;
+
+#if lime_vorbis
+import lime.media.vorbis.VorbisFile;
+#end
 
 using grig.audio.lime.UInt8ArrayTools;
 
@@ -58,6 +61,9 @@ class SpectralAnalyzer
 	private var vis = new FFTVisualization();
     private var barHistories = new Array<RecentPeakFinder>();
     private var blackmanWindow = new Array<Float>();
+    #end
+    #if lime_vorbis
+    private var vorbisBuffer:UInt8Array;
     #end
 
     private function freqToBin(freq:Float, mathType:MathType = Round):Int
@@ -211,6 +217,8 @@ class SpectralAnalyzer
         #if lime_vorbis
         if (audioClip.streamed)
         {
+            vorbisBuffer = null;
+
             @:privateAccess
             var vorbisFile = audioSource.buffer.__srcVorbisFile;
 
@@ -221,11 +229,11 @@ class SpectralAnalyzer
             vorbisFile.pcmSeek(Std.int(startFrame / (numOctets + audioClip.audioBuffer.channels)));
 
             @:privateAccess
-            _vorbisBuffer = readVorbisBuffer(vorbisFile, wantedLength);
+            vorbisBuffer = readVorbisFileBuffer(vorbisFile, wantedLength);
 
             vorbisFile.pcmSeek(prevPos);
 
-            signal = getSignal(_vorbisBuffer, audioClip.audioBuffer.bitsPerSample);
+            signal = getSignal(vorbisBuffer, audioClip.audioBuffer.bitsPerSample);
         }
         else
         #end
@@ -284,8 +292,6 @@ class SpectralAnalyzer
         #end
 	}
 
-    var _vorbisBuffer:UInt8Array;
-
     // Prevents a memory leak by reusing array
     var _buffer:Array<Float> = [];
 	function getSignal(data:lime.utils.UInt8Array, bitsPerSample:Int):Array<Float>
@@ -320,7 +326,7 @@ class SpectralAnalyzer
     #if lime_vorbis
     // Pretty much copied from
     // https://github.com/openfl/lime/blob/develop/src/lime/_internal/backend/native/NativeAudioSource.hx#L212
-    function readVorbisBuffer(vorbisFile:VorbisFile, length:Int):UInt8Array
+    function readVorbisFileBuffer(vorbisFile:VorbisFile, length:Int):UInt8Array
     {
         var buffer:UInt8Array = new UInt8Array(length);
 
