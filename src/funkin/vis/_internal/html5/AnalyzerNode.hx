@@ -79,34 +79,31 @@ class AnalyzerNode
         var gainNode = howl._sounds[0]._node;
         var bufferSrc = gainNode.bufferSource;
 
-        // Disconnect everything from the gain node
+        // Disconnect all previous outputs from the gain node and analyser
         gainNode.disconnect();
+        analyzer.disconnect();
 
         if (bufferSrc != null)
         {
-            // Disconnect everything from the audio source
+            // Disconnect all previous outputs from the source 
+            // so we can mess with the order of nodes ourselves
             bufferSrc.disconnect();
 
-            // Disconnect our analyzer from any previous leftovers
-            analyzer.disconnect();
-
-            // Connect the buffer source directly to the analyzer
-            // This way we can the analyzer can get audio data
-            // that's not affected by the volume
+            // Connect the source directly to the analyser
+            // This way the analyser can get audio data that's not affected by the volume
             bufferSrc.connect(analyzer);
 
-            // Connect the analyzer to the gain node
+            // Connect the analyser to the gain node so we can control the audio's volume
             analyzer.connect(cast gainNode);
         }
         else 
         {
-            // If we can't get the bufferSource, let's try to fall back
-            // to the old method of attaching the analyzer to the gain node.
-            analyzer.disconnect();
+            // If for whatever reason we can't get the source node,
+            // fall back to connecting the gain node to the analyser as done before
             gainNode.connect(analyzer);
         }
 
-        // Connect the gain node back to the destination
+        // Finally, connect the gain node back to the destination
         gainNode.connect(ctx.destination);
     }
 
