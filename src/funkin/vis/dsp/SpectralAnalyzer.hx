@@ -1,5 +1,7 @@
 package funkin.vis.dsp;
 
+import haxe.io.Bytes;
+import lime.utils.UInt8Array;
 import flixel.FlxG;
 import flixel.math.FlxMath;
 import funkin.vis._internal.html5.AnalyzerNode;
@@ -7,6 +9,10 @@ import funkin.vis.audioclip.frontends.LimeAudioClip;
 import grig.audio.FFT;
 import grig.audio.FFTVisualization;
 import lime.media.AudioSource;
+
+#if lime_vorbis
+import lime.media.vorbis.VorbisFile;
+#end
 
 using grig.audio.lime.UInt8ArrayTools;
 
@@ -55,6 +61,9 @@ class SpectralAnalyzer
 	private var vis = new FFTVisualization();
     private var barHistories = new Array<RecentPeakFinder>();
     private var blackmanWindow = new Array<Float>();
+    #end
+    #if lime_vorbis
+    private var vorbisBuffer:UInt8Array;
     #end
 
     private function freqToBin(freq:Float, mathType:MathType = Round):Int
@@ -198,8 +207,8 @@ class SpectralAnalyzer
 
         return levels;
         #else
-        var numOctets = Std.int(audioSource.buffer.bitsPerSample / 8);
-		var wantedLength = fftN * numOctets * audioSource.buffer.channels;
+        var numOctets = Std.int(audioClip.audioBuffer.bitsPerSample / 8);
+		var wantedLength = fftN * numOctets * audioClip.audioBuffer.channels;
 		var startFrame = audioClip.currentFrame;
 
         if (startFrame < 0)
@@ -208,17 +217,45 @@ class SpectralAnalyzer
         }
 
         startFrame -= startFrame % numOctets;
-        var segment = audioSource.buffer.data.subarray(startFrame, min(startFrame + wantedLength, audioSource.buffer.data.length));
 
-		var signal = getSignal(segment, audioSource.buffer.bitsPerSample);
+        var endFrame:Int = min(startFrame + wantedLength, audioClip.audioBuffer.length);
+        var signal:Array<Float>;
 
-		if (audioSource.buffer.channels > 1) {
+        #if lime_vorbis
+        if (audioClip.streamed)
+        {
+            vorbisBuffer = null;
+
+            @:privateAccess
+            var vorbisFile = audioSource.buffer.__srcVorbisFile;
+
+            // reading from VorbisFile will automatically move the position
+            // which causes issues with playback, so we keep old time to go back to it
+            var prevPos = vorbisFile.pcmTell();
+
+            vorbisFile.pcmSeek(Std.int(startFrame / (numOctets + audioClip.audioBuffer.channels)));
+
+            @:privateAccess
+            vorbisBuffer = readVorbisFileBuffer(vorbisFile, wantedLength);
+
+            vorbisFile.pcmSeek(prevPos);
+
+            signal = getSignal(vorbisBuffer, audioClip.audioBuffer.bitsPerSample);
+        }
+        else
+        #end
+        {
+            var segment:UInt8Array = audioSource.buffer.data.subarray(startFrame, endFrame);
+            signal = getSignal(segment, audioClip.audioBuffer.bitsPerSample);
+        }
+
+		if (audioClip.audioBuffer.channels > 1) {
 			var mixed = new Array<Float>();
-			mixed.resize(Std.int(signal.length / audioSource.buffer.channels));
+			mixed.resize(Std.int(signal.length / audioClip.audioBuffer.channels));
 			for (i in 0...mixed.length) {
 				mixed[i] = 0.0;
-				for (c in 0...audioSource.buffer.channels) {
-					mixed[i] += 0.7 * signal[i*audioSource.buffer.channels+c];
+				for (c in 0...audioClip.audioBuffer.channels) {
+					mixed[i] += 0.7 * signal[i*audioClip.audioBuffer.channels+c];
 				}
                 mixed[i] *= blackmanWindow[i];
 			}
@@ -292,6 +329,42 @@ class SpectralAnalyzer
         }
         return _buffer;
     }
+
+    #if lime_vorbis
+    // Pretty much copied from
+    // https://github.com/openfl/lime/blob/develop/src/lime/_internal/backend/native/NativeAudioSource.hx#L212
+    function readVorbisFileBuffer(vorbisFile:VorbisFile, length:Int):UInt8Array
+    {
+        var buffer:UInt8Array = new UInt8Array(length);
+
+        var read:Int = 0;
+        var total:Int = 0;
+        var readMax:Int = 4096;
+
+        while (total < length)
+        {
+            readMax = 4096;
+
+            if (readMax > length - total)
+            {
+                readMax = length - total;
+            }
+
+            read = vorbisFile.read(buffer.buffer, total, readMax);
+
+            if (read > 0)
+            {
+                total += read;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        return buffer;
+    }
+    #end
 
     @:generic
     static inline function clamp<T:Float>(val:T, min:T, max:T):T
