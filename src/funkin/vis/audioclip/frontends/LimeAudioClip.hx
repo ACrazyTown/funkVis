@@ -1,7 +1,6 @@
 package funkin.vis.audioclip.frontends;
 
 import haxe.Int64;
-import flixel.FlxG;
 import flixel.math.FlxMath;
 import funkin.vis.AudioBuffer;
 import lime.media.AudioSource;
@@ -19,6 +18,8 @@ import lime.media.AudioSource;
 class LimeAudioClip implements funkin.vis.AudioClip
 {
 	public var audioBuffer(default, null):AudioBuffer;
+	public var audioSource(default, null):AudioSource;
+
     public var currentFrame(get, never):Int;
 	public var source:Dynamic;
 	public var streamed:Bool;
@@ -70,12 +71,13 @@ class LimeAudioClip implements funkin.vis.AudioClip
 		#end
 
 		this.audioBuffer = new AudioBuffer(data, sampleRate, length, bitsPerSample, channels);
+		this.audioSource = audioSource;
 		this.source = audioSource.buffer.src;
 	}
 
 	private function get_currentFrame():Int
 	{
-		var value = Std.int(FlxMath.remapToRange(FlxG.sound.music.time, 0, FlxG.sound.music.length, 0, audioBuffer.length));
+		var value = Std.int(FlxMath.remapToRange(audioSource.currentTime, 0, audioSource.length, 0, audioBuffer.length));
 
 		if (value < 0)
 			return -1;

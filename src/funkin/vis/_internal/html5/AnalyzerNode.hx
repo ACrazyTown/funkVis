@@ -1,6 +1,5 @@
 package funkin.vis._internal.html5;
 
-import flixel.FlxG;
 import funkin.vis.AudioClip;
 import funkin.vis.AudioBuffer;
 #if lime_howlerjs
