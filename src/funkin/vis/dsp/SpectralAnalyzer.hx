@@ -9,6 +9,7 @@ import funkin.vis.audioclip.frontends.LimeAudioClip;
 import grig.audio.FFT;
 import grig.audio.FFTVisualization;
 import lime.media.AudioSource;
+import dsp.Signal;
 
 #if lime_vorbis
 import lime.media.vorbis.VorbisFile;

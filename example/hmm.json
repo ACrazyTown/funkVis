@@ -28,6 +28,13 @@
       "version": "1.2.4"
     },
     {
+      "name": "hxdsp",
+      "type": "git",
+      "dir": null,
+      "ref": "master",
+      "url": "https://github.com/baioc/hxdsp"
+    },
+    {
       "name": "instrument",
       "type": "git",
       "dir": null,

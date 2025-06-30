@@ -5,9 +5,10 @@
     "description": "Haxe FFT visulization stuff",
     "classPath": "src",
     "tags": ["audio", "fft", "visualization"],
+    "contributors": ["ninjamuffin99"],
     "releasenote": "Initial release",
     "version": "0.0.1",
     "dependencies": {
-        
+        "hxdsp": ""
     }
 }
