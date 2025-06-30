@@ -410,6 +410,8 @@ class SpectralAnalyzer
     function set_fftN(value:Int):Int
     {
         fftN = value;
+        
+        @:privateAccess
         var pow2 = DspFFT.nextPow2(value);
         fftN2 = Std.int(pow2 / 2);
 

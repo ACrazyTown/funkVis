@@ -1,5 +1,7 @@
 package funkin.vis.dsp;
 
+import dsp.Signal;
+
 class RecentPeakFinder
 {
     private var buffer:Array<Float>;
