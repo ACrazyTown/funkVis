@@ -10,6 +10,7 @@ import grig.audio.FFT;
 import grig.audio.FFTVisualization;
 import lime.media.AudioSource;
 import dsp.Signal;
+import dsp.FFT as DspFFT;
 
 #if lime_vorbis
 import lime.media.vorbis.VorbisFile;
@@ -409,7 +410,7 @@ class SpectralAnalyzer
     function set_fftN(value:Int):Int
     {
         fftN = value;
-        var pow2 = FFT.nextPow2(value);
+        var pow2 = DspFFT.nextPow2(value);
         fftN2 = Std.int(pow2 / 2);
 
         #if web
