@@ -3,7 +3,7 @@
     {
       "name": "flixel",
       "type": "haxelib",
-      "version": "5.3.1"
+      "version": "6.1.0"
     },
     {
       "name": "funkin.vis",
@@ -13,43 +13,31 @@
     {
       "name": "grig.audio",
       "type": "git",
-      "dir": "src",
-      "ref": "cbf91e2180fd2e374924fe74844086aab7891666",
-      "url": "https://gitlab.com/haxe-grig/grig.audio.git"
+      "dir": null,
+      "ref": "fa11de5",
+      "url": "https://github.com/ACrazyTown/grig.audio-funkin"
     },
     {
-      "name": "hxcpp",
+      "name": "hscript",
       "type": "haxelib",
-      "version": "4.3.2"
-    },
-    {
-      "name": "hxcpp-debug-server",
-      "type": "haxelib",
-      "version": "1.2.4"
+      "version": "2.6.0"
     },
     {
       "name": "hxdsp",
       "type": "git",
       "dir": null,
-      "ref": "master",
+      "ref": "d761e17",
       "url": "https://github.com/baioc/hxdsp"
-    },
-    {
-      "name": "instrument",
-      "type": "git",
-      "dir": null,
-      "ref": "master",
-      "url": "https://github.com/AlexHaxe/haxe-instrument"
     },
     {
       "name": "lime",
       "type": "haxelib",
-      "version": "8.0.2"
+      "version": "8.2.2"
     },
     {
       "name": "openfl",
       "type": "haxelib",
-      "version": "9.2.2"
+      "version": "9.4.1"
     }
   ]
 }

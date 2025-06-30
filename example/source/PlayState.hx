@@ -71,14 +71,6 @@ class PlayState extends FlxState
 		// addDebugText((data.length / 4) / musicSrc.buffer.sampleRate);
 		// addDebugText(FlxG.sound.music.length / 1000);
 		super.update(elapsed);
-
-		if (FlxG.keys.justPressed.SPACE)
-		{
-			#if instrument
-			// instrument.coverage.Coverage.endCoverage(); // when measuring coverage
-			instrument.profiler.Profiler.endProfiler(); // when profiling
-			#end
-		}
 	}
 
 	function addDebugText(text:Dynamic)
