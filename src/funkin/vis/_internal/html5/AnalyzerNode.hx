@@ -31,23 +31,12 @@ class AnalyzerNode
         this.audioClip = audioClip;
 
         #if lime_howlerjs
-        howl = audioClip.source;
+        howl = audioClip.audioBuffer.src.howl;
         ctx = howl._sounds[0]._node.context;
 
         analyzer = new AnalyseWebAudio(ctx);
         howl.on("play", onHowlPlay);
 
-        // trace(node.bufferSource);
-        // untyped console.log(node);
-
-        // analyzer = new AnalyseWebAudio(audioClip.source._sounds[0]._node.context);
-        // audioClip.source._sounds[0]._node.connect(analyzer);
-
-        // trace(audioClip.source._sounds[0]._node.context.sampleRate);
-        // trace(analyzer);
-        // trace(analyzer.fftSize);
-        // howler = cast buffer.source;
-        // trace(howler);
         getFloatFrequencyData();
         #end
     }

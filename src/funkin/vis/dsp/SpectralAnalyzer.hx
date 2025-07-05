@@ -150,10 +150,10 @@ class SpectralAnalyzer
         #end
     }
 
-	public function new(audioSource:AudioSource, barCount:Int, maxDelta:Float = 0.01, peakHold:Int = 30)
+	public function new(audioClip:AudioClip, barCount:Int, maxDelta:Float = 0.01, peakHold:Int = 30)
 	{
-        this.audioSource = audioSource;
-		this.audioClip = new LimeAudioClip(audioSource);
+		this.audioClip = audioClip;
+        this.audioSource = audioClip.audioSource;
 		this.barCount = barCount;
         this.maxDelta = maxDelta;
         this.peakHold = peakHold;

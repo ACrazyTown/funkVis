@@ -18,10 +18,9 @@ import lime.media.AudioSource;
 class LimeAudioClip implements funkin.vis.AudioClip
 {
 	public var audioBuffer(default, null):AudioBuffer;
-	public var audioSource(default, null):AudioSource;
+	public var audioSource(default, null):Dynamic;
 
     public var currentFrame(get, never):Int;
-	public var source:Dynamic;
 	public var streamed:Bool;
 
 	public function new(audioSource:AudioSource)
@@ -29,7 +28,7 @@ class LimeAudioClip implements funkin.vis.AudioClip
 		var limeBuffer = audioSource.buffer;
 		var data:lime.utils.UInt16Array = cast limeBuffer.data;
 
-		#if web
+		#if lime_howlerjs
 		streamed = false;
 
 		var sampleRate:Float = limeBuffer.src._sounds[0]._node.context.sampleRate;
@@ -72,7 +71,6 @@ class LimeAudioClip implements funkin.vis.AudioClip
 
 		this.audioBuffer = new AudioBuffer(data, sampleRate, length, bitsPerSample, channels);
 		this.audioSource = audioSource;
-		this.source = audioSource.buffer.src;
 	}
 
 	private function get_currentFrame():Int
