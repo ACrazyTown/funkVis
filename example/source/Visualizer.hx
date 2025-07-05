@@ -1,5 +1,6 @@
 package;
 
+import funkin.vis.audioclip.frontends.LimeAudioClip;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
@@ -19,7 +20,7 @@ class Visualizer extends FlxGroup
     {
         super();
 
-        analyzer = new SpectralAnalyzer(audioSource, barCount, 0.1, 10);
+        analyzer = new SpectralAnalyzer(new LimeAudioClip(audioSource), barCount, 0.1, 10);
 
         grpBars = new FlxTypedGroup<FlxSprite>();
 		add(grpBars);

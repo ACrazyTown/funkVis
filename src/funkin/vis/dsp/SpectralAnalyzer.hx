@@ -24,8 +24,8 @@ typedef Bar =
 
 typedef BarObject =
 {
-	var binLo:Int;
-	var binHi:Int;
+    var binLo:Int;
+    var binHi:Int;
     var freqLo:Float;
     var freqHi:Float;
     var recentValues:RecentPeakFinder;
@@ -49,7 +49,7 @@ class SpectralAnalyzer
     // Awkwardly, we'll have to interfaces for now because there's too much platform specific stuff we need
     private var audioSource:AudioSource;
     private var audioClip:AudioClip;
-	private var barCount:Int;
+    private var barCount:Int;
     private var maxDelta:Float;
     private var peakHold:Int;
     var fftN2:Int = 2048;
@@ -58,7 +58,7 @@ class SpectralAnalyzer
     private var bars:Array<BarObject> = [];
     #else
     private var fft:FFT;
-	private var vis = new FFTVisualization();
+    private var vis = new FFTVisualization();
     private var barHistories = new Array<RecentPeakFinder>();
     private var blackmanWindow = new Array<Float>();
     #end
@@ -150,11 +150,11 @@ class SpectralAnalyzer
         #end
     }
 
-	public function new(audioClip:AudioClip, barCount:Int, maxDelta:Float = 0.01, peakHold:Int = 30)
-	{
-		this.audioClip = audioClip;
+    public function new(audioClip:AudioClip, barCount:Int, maxDelta:Float = 0.01, peakHold:Int = 30)
+    {
+        this.audioClip = audioClip;
         this.audioSource = audioClip.audioSource;
-		this.barCount = barCount;
+        this.barCount = barCount;
         this.maxDelta = maxDelta;
         this.peakHold = peakHold;
 
@@ -166,7 +166,7 @@ class SpectralAnalyzer
 
         calcBars(barCount, peakHold);
         resizeBlackmanWindow(fftN);
-	}
+    }
 
     public function cleanup():Void
     {
@@ -175,8 +175,8 @@ class SpectralAnalyzer
         #end
     }
 
-	public function getLevels(?levels:Array<Bar>):Array<Bar>
-	{
+    public function getLevels(?levels:Array<Bar>):Array<Bar>
+    {
         if(levels == null) levels = new Array<Bar>();
         #if web
         var amplitudes:Array<Float> = htmlAnalyzer.getFloatFrequencyData();
@@ -208,8 +208,8 @@ class SpectralAnalyzer
         return levels;
         #else
         var numOctets = Std.int(audioClip.audioBuffer.bitsPerSample / 8);
-		var wantedLength = fftN * numOctets * audioClip.audioBuffer.channels;
-		var startFrame = audioClip.currentFrame;
+        var wantedLength = fftN * numOctets * audioClip.audioBuffer.channels;
+        var startFrame = audioClip.currentFrame;
 
         if (startFrame < 0)
         {
@@ -249,22 +249,22 @@ class SpectralAnalyzer
             signal = getSignal(segment, audioClip.audioBuffer.bitsPerSample);
         }
 
-		if (audioClip.audioBuffer.channels > 1) {
-			var mixed = new Array<Float>();
-			mixed.resize(Std.int(signal.length / audioClip.audioBuffer.channels));
-			for (i in 0...mixed.length) {
-				mixed[i] = 0.0;
-				for (c in 0...audioClip.audioBuffer.channels) {
-					mixed[i] += 0.7 * signal[i*audioClip.audioBuffer.channels+c];
-				}
+        if (audioClip.audioBuffer.channels > 1) {
+            var mixed = new Array<Float>();
+            mixed.resize(Std.int(signal.length / audioClip.audioBuffer.channels));
+            for (i in 0...mixed.length) {
+                mixed[i] = 0.0;
+                for (c in 0...audioClip.audioBuffer.channels) {
+                    mixed[i] += 0.7 * signal[i*audioClip.audioBuffer.channels+c];
+                }
                 mixed[i] *= blackmanWindow[i];
-			}
-			signal = mixed;
-		}
+            }
+            signal = mixed;
+        }
 
-		var range = 16;
+        var range = 16;
         var freqs = fft.calcFreq(signal);
-		var bars = vis.makeLogGraph(freqs, barCount + 1, Math.floor(maxDb - minDb), range);
+        var bars = vis.makeLogGraph(freqs, barCount + 1, Math.floor(maxDb - minDb), range);
 
         if (bars.length - 1 > barHistories.length) {
             barHistories.resize(bars.length - 1);
@@ -297,11 +297,11 @@ class SpectralAnalyzer
         }
         return levels;
         #end
-	}
+    }
 
     // Prevents a memory leak by reusing array
     var _buffer:Array<Float> = [];
-	function getSignal(data:lime.utils.UInt8Array, bitsPerSample:Int):Array<Float>
+    function getSignal(data:lime.utils.UInt8Array, bitsPerSample:Int):Array<Float>
     {
         switch(bitsPerSample)
         {
@@ -374,7 +374,7 @@ class SpectralAnalyzer
 
     static function calculateBlackmanWindow(n:Int, fftN:Int)
     {
-		return 0.42 - 0.50 * Math.cos(2 * Math.PI * n / (fftN - 1)) + 0.08 * Math.cos(4 * Math.PI * n / (fftN - 1));
+        return 0.42 - 0.50 * Math.cos(2 * Math.PI * n / (fftN - 1)) + 0.08 * Math.cos(4 * Math.PI * n / (fftN - 1));
     }
 
     @:generic
