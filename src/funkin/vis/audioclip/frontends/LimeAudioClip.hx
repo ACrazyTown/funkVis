@@ -75,6 +75,7 @@ class LimeAudioClip implements funkin.vis.AudioClip
 
     private function get_currentFrame():Int
     {
+        var audioSource:AudioSource = cast (audioSource, AudioSource);
         var value = Std.int(FlxMath.remapToRange(audioSource.currentTime, 0, audioSource.length, 0, audioBuffer.length));
 
         if (value < 0)

@@ -4,6 +4,8 @@ import flixel.sound.FlxSound;
 
 class FlxAudioClip extends LimeAudioClip
 {
+    public var sound(default, null):FlxSound;
+
     public function new(sound:FlxSound)
     {
         @:privateAccess
@@ -14,5 +16,7 @@ class FlxAudioClip extends LimeAudioClip
             sound._channel.__audioSource 
             #end
         );
+
+        this.sound = sound;
     }
 }
